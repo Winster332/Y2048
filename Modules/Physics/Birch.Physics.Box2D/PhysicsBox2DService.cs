@@ -53,7 +53,13 @@ public class PhysicsBox2DService : IPhysicsService
 
     public void Step(float dt, int velocityIterations, int positionIterations)
     {
-        _world.Step(dt, velocityIterations, positionIterations);
+        try
+        {
+            _world.Step(dt, velocityIterations, positionIterations);
+        }
+        catch (Exception)
+        {
+        }
 
         for (var body = _world.GetBodyList(); body != null; body = body.GetNext())
         {

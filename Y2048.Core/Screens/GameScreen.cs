@@ -44,10 +44,10 @@ public class GameScreen : Screen
         _state = state;
         _boxGenerator.Initialize(_physics, ModelStorage, state);
         Manipulator = manipulator;
-        GameOverLayout = new GameOverLayout(this, fileSystem);
+        GameOverLayout = new GameOverLayout(this, _fileSystem);
         GameOverLayout.Restart += (_, _) => Restart();
 
-        var value = _fileSystem.ReadFromFile(Path.Combine("Resources", "data.json"));
+        var value = _fileSystem.ReadStringFromAsset("data.json");
         if (!string.IsNullOrEmpty(value))
         {
             _state.SetMaxBalls(JToken.Parse(value)["maxBalls"]?.ToObject<int>() ?? 0);
@@ -56,8 +56,9 @@ public class GameScreen : Screen
 
     private void Restart()
     {
-        foreach (var box in ModelStorage.GetAllModels<BoxModel>())
+        foreach (var box in ModelStorage.GetAllModels<BoxModel>().ToArray())
         {
+            if(box.RigidBody == null) continue;
             _physics.DestroyBody(box.RigidBody);
             ModelStorage.RemoveById(box.Id);
         }
@@ -161,7 +162,7 @@ public class GameScreen : Screen
         {
             maxBalls = _state.MaxBalls
         });
-        _fileSystem.RewriteTo(Path.Combine("Resources", "data.json"), data);
+        _fileSystem.RewriteToAsset("data.json", data);
     }
 
     private void OnDraw(IGraphics g)

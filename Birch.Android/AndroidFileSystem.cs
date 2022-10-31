@@ -1,11 +1,19 @@
 ﻿using System;
 using System.IO;
+using Android.Content.Res;
 using Birch.FileSystem;
 
 namespace Birch.Android;
 
 public class AndroidFileSystem : IFileSystem
 {
+    private AssetManager _assetManager;
+
+    public AndroidFileSystem(AssetManager assetManager)
+    {
+        _assetManager = assetManager;
+    }
+
     public bool Create(string file, string content = "")
     {
         try
@@ -188,5 +196,54 @@ public class AndroidFileSystem : IFileSystem
         }
 
         return false;
+    }
+
+    public string ReadStringFromAsset(string fileName)
+    {
+        var text = string.Empty;
+
+        using (var input = _assetManager.Open(fileName))
+        {
+            using (var reader = new StreamReader(input))
+            {
+                text = reader.ReadToEnd();
+            }
+        }
+
+        return text;
+    }
+
+    public byte[] ReadBytesFromAsset(string path)
+    {
+        var bytes = Array.Empty<byte>();
+        try
+        {
+            using var fileStream = _assetManager.Open(path);
+            using (var memory = new MemoryStream())
+            {
+                fileStream.CopyTo(memory);
+                bytes = memory.ToArray();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+
+        return bytes;
+    }
+
+    public void RewriteToAsset(string path, string content)
+    {
+        try
+        {
+            using var fileStream = _assetManager.Open(path);
+            using var writer = new StreamWriter(fileStream);
+            writer.WriteLine(content);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
     }
 }

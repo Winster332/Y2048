@@ -14,15 +14,15 @@
 
 	<ItemGroup>
 	  <None Remove="Resources\hand.png" />
-	  <Content Include="Resources\hand.png">
+	  <Content Include="Assets\hand.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	  <None Remove="Resources\restart.png" />
-	  <Content Include="Resources\restart.png">
+	  <Content Include="Assets\restart.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	  <None Remove="Resources\trophy.png" />
-	  <Content Include="Resources\trophy.png">
+	  <Content Include="Assets\trophy.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>

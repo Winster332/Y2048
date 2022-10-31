@@ -1,4 +1,6 @@
-﻿using Android.OS;
+﻿using System;
+using System.Threading;
+using Android.OS;
 using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
@@ -11,12 +13,13 @@ using Birch.UI.Screens;
 using Microsoft.Extensions.DependencyInjection;
 using SkiaSharp;
 using SkiaSharp.Views.Android;
+using NotImplementedException = System.NotImplementedException;
 
 namespace Birch.Android;
 
 public class BirchActivity : AppCompatActivity, IStartup
 {
-    public SKCanvasView CanvasView;
+    public SKGLSurfaceView CanvasView;
     private SkGraphics _graphics;
     private ScreenService _screenService;
 
@@ -32,30 +35,40 @@ public class BirchActivity : AppCompatActivity, IStartup
 
     public void InitializeBirchEngine(RelativeLayout layout)
     {
-        CanvasView = new SKCanvasView(this);
-        CanvasView.PaintSurface += CanvasOnPaintSurface;
+        CanvasView = new SKGLSurfaceView(this);
+        // CanvasView = new SKCanvasView(this);
+        CanvasView.PaintSurface += CanvasViewOnPaintSurface;
         layout.AddView(CanvasView);
+
+        // var thread = new Thread(Update);
+        // thread.Start();
     }
 
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<IFileSystem, AndroidFileSystem>();
         services.AddSingleton<IGraphics>(_graphics);
+        services.AddSingleton(Assets!);
     }
 
     private SizeF GetActivitySize()
     {
-        var metrics = new DisplayMetrics();
-        WindowManager?.DefaultDisplay?.GetRealMetrics(metrics);
-
-        return new SizeF(metrics.WidthPixels, metrics.HeightPixels);
+        // var metrics = new DisplayMetrics();
+        // WindowManager?.DefaultDisplay?.GetRealMetrics(metrics);
+        //
+        // return new SizeF(metrics.WidthPixels, metrics.HeightPixels);
+        return new SizeF(CanvasView.Width, CanvasView.Height);
     }
+
+    private IAppContext _context;
 
     public void Configure(IAppContext context)
     {
+        _context = context;
         var size = GetActivitySize();
-        _screenService = context.ScreenService;
-        context.SetScreenSize(size.Width, size.Height);
+        _screenService = _context.ScreenService;
+        _context.SetScreenSize(size.Width, size.Height);
+        _graphics.SetContext(_context);
 
         // Resize += (_, _) =>
         // {
@@ -76,12 +89,32 @@ public class BirchActivity : AppCompatActivity, IStartup
                 _screenService.InvokeTouchUp(ToTouchState(e));
         };
 
-        TouchState ToTouchState(View.TouchEventArgs e) => new TouchState(new Vec2(e.Event.GetRawX(0), e.Event.GetRawY(0)));
+        var metrics = new DisplayMetrics();
+        WindowManager?.DefaultDisplay?.GetRealMetrics(metrics);
+
+        _size = new SizeF(metrics.WidthPixels, metrics.HeightPixels);
+
+        TouchState ToTouchState(View.TouchEventArgs e) =>
+            new TouchState(new Vec2(e.Event.GetRawX(0), e.Event.GetRawY(0)));
     }
 
-    private void CanvasOnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
+    private SizeF _size;
+    private int _sleepTimeout = 20;
+
+    private void Update()
     {
-        _graphics.SetCanvas(e.Surface.Canvas);
+        while (true)
+        {
+            _screenService.Update();
+            Thread.Sleep(_sleepTimeout);
+        }
+    }
+
+    private void CanvasViewOnPaintSurface(object sender, SKPaintGLSurfaceEventArgs e)
+    {
+        // var scale = (float)_size.Height / (float)e.Info.Height;
+        var scale = (float)e.Info.Height / (float)e.Info.Width;
+        _graphics.SetCanvas(e.Surface.Canvas, scale);
 
         _screenService.Update();
         _screenService.Draw(_graphics);

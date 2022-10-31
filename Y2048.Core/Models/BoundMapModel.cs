@@ -32,7 +32,7 @@ public class BoundMapModel : GameModel
         var y = _heigth / 2;
         return new Shape[]
         {
-            PolygonShape.CreateBox(0, y-h-120, w, h), // bottom
+            PolygonShape.CreateBox(0, y-h+5, w, h), // bottom
             PolygonShape.CreateBox(-_width/2 + 5, 0, 10, _heigth), // left
             PolygonShape.CreateBox(_width/2 - 5, 0, 10, _heigth), // right
             PolygonShape.CreateBox(0, -_heigth/2, _width, 10), // top
@@ -44,7 +44,7 @@ public class BoundMapModel : GameModel
         var w = _width;
         var h = 10f;
         var y = _heigth / 2-h/2;
-        g.DrawRect(-w / 2, y-130, w, h, Paint);
+        g.DrawRect(-w / 2, y-5, w, h, Paint);
 
         g.DrawRect(-_width/2, -_heigth/2, 10,_heigth, Paint);
         g.DrawRect(_width/2-10, -_heigth/2, 10,_heigth, Paint);

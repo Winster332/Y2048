@@ -41,9 +41,9 @@ public class BoxModel : RectangleModel
     {
         base.Draw(g);
 
-        g.DrawText(DisplayValue, 0, 8, new Paint
+        g.DrawText(DisplayValue, 0, -5, new Paint
         {
-            TextSize = 25,
+            TextSize = 25f,
             TextAlign = TextAlign.Center,
             Style = PaintStyle.Fill,
             BoldText = true,

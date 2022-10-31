@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.Util;
 using Android.Views;
+using Android.Widget;
 using Birch.System;
 using Birch.UI.Screens;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,10 +61,12 @@ public class AppAndroidContext : IAppContext
         ServiceProvider = serviceProvider;
         _activity = activity;
 
-        var metrics = new DisplayMetrics();
-        _activity.WindowManager?.DefaultDisplay?.GetRealMetrics(metrics);
+        // var metrics = new DisplayMetrics();
+        // _activity.WindowManager?.DefaultDisplay?.GetRealMetrics(metrics);
 
-        _size = new SizeF(metrics.WidthPixels, metrics.HeightPixels);
+        // _size = new SizeF(metrics.WidthPixels, metrics.HeightPixels);
+        _size = new SizeF(activity.CanvasView.Width, activity.CanvasView.Height);
+
         ScreenService = new ScreenService(serviceProvider);
     }
 

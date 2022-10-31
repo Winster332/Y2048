@@ -12,7 +12,7 @@ public sealed class RectButton : RectangleView
     private Paint _burronPaint;
     private Paint _textPaint;
 
-    public RectButton(string text, float width = 80, float height = 25)
+    public RectButton(string text, float width = 80, float height = 35)
     {
         Width = width;
         Height = height;
@@ -28,7 +28,7 @@ public sealed class RectButton : RectangleView
             Style = PaintStyle.Fill,
             TextAlign = TextAlign.Center,
             Color = new Color(248, 248, 248),
-            TextSize = 25
+            TextSize = 16
         };
 
         Draw += OnDraw;
@@ -39,7 +39,7 @@ public sealed class RectButton : RectangleView
         g.Save();
         g.Translate(X, Y);
         g.DrawRoundRect(0, 0, Width, Height, 10, 10, _burronPaint);
-        g.DrawText(Text, Width/2, Height/2+ 8f, _textPaint);
+        g.DrawText(Text, Width/2, Height/2-3, _textPaint);
         g.Restore();
     }
 }
@@ -56,7 +56,7 @@ public class GameOverLayout : RectangleView
     public GameOverLayout(Screen screen, IFileSystem fileSystem)
     {
         _screen = screen;
-        _bitmap = new Bitmap(fileSystem.ReadBytesFromFile(Path.Combine("Resources", "trophy.png")), 25f, 30f);
+        _bitmap = new Bitmap(fileSystem.ReadBytesFromAsset("trophy.png"), 25f, 30f);
         CurrentBalls = "0";
         MaxBalls = "0";
 
@@ -70,8 +70,8 @@ public class GameOverLayout : RectangleView
 
     private void OnLoaded(View view)
     {
-        PlayButton = new RectButton("Начать сначала", Width / 2.5f, 60f);
-        PlayButton.SetPosition(Width/2-PlayButton.Width/2, Height/2+120-PlayButton.Height/2);
+        PlayButton = new RectButton("Начать сначала", Width / 2.5f, 80f);
+        PlayButton.SetPosition(Width/2-PlayButton.Width/2, Height/2+170-PlayButton.Height/2);
         PlayButton.Click += (_, args) =>
         {
             Restart?.Invoke(this, args);
@@ -111,7 +111,7 @@ public class GameOverLayout : RectangleView
             Color = new Color(248,248,248),
             TextSize = 35
         });
-        g.DrawText(CurrentBalls, 0, -Height/2+180, new Paint
+        g.DrawText(CurrentBalls, 0, -Height/2+230, new Paint
         {
             Style = PaintStyle.Fill,
             TextAlign = TextAlign.Center,
@@ -127,8 +127,8 @@ public class GameOverLayout : RectangleView
             Color = new Color(248,248,248),
             TextSize = 18
         });
-        g.DrawBitmap(_bitmap, -_bitmap.Width/2-30, -_bitmap.Height/2+24);
-        g.DrawText(MaxBalls, -10, 30, new Paint
+        g.DrawBitmap(_bitmap, -_bitmap.Width/2-30, -_bitmap.Height/2+54);
+        g.DrawText(MaxBalls, -10, 50, new Paint
         {
             Style = PaintStyle.Fill,
             TextAlign = TextAlign.Left,

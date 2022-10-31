@@ -98,6 +98,22 @@
 	    <Name>Y2048.Core</Name>
 	  </ProjectReference>
 	</ItemGroup>
+	<ItemGroup>
+	  <AndroidAsset Include="Assets\hand.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </AndroidAsset>
+	  <AndroidAsset Include="Assets\restart.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </AndroidAsset>
+	  <AndroidAsset Include="Assets\trophy.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </AndroidAsset>
+	</ItemGroup>
+	<ItemGroup>
+	  <AndroidAsset Include="Assets\data.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </AndroidAsset>
+	</ItemGroup>
 	<Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 	<!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	  Other similar extension points exist, see Microsoft.Common.targets.

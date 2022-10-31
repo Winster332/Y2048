@@ -187,4 +187,19 @@ public class DesktopFileSystem : IFileSystem
 
         return false;
     }
+
+    public byte[] ReadBytesFromAsset(string path)
+    {
+        return ReadBytesFromFile(Path.Combine("Assets", path));
+    }
+
+    public void RewriteToAsset(string path, string content)
+    {
+        RewriteTo(Path.Combine("Assets", path), content);
+    }
+
+    public string ReadStringFromAsset(string fileName)
+    {
+        return ReadFromFile(Path.Combine("Assets", fileName));
+    }
 }

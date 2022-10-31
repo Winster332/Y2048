@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Drawing;
+using System.Numerics;
 
 namespace Birch.Graphics;
 
@@ -118,10 +119,16 @@ public class ShaderLinearGradient : Shader
 
 public class Rect
 {
+    public float X;
+    public float Y;
     public float Width;
     public float Height;
-    public Rect(float left, float right, float top, float mp)
+    public Rect(float x, float y, float width, float height)
     {
+        X = x;
+        Y = y;
+        Width = width;
+        Height = height;
     }
 }
 
@@ -161,6 +168,17 @@ public class Bitmap
     }
 }
 
+public class SvgPath
+{
+    public Point[] Points { get; private set; }
+    public bool Close { get; private set; }
+    public void AddPoly(Point[] points, bool close)
+    {
+        Points = points;
+        Close = close;
+    }
+}
+
 public interface IGraphics
 {
     public void Save();
@@ -180,4 +198,6 @@ public interface IGraphics
     public void Scale(float sx, float sy, float px, float py);
     public void DrawText(string text, float x, float y, Paint paint);
     public void DrawBitmap(Bitmap bitmap, float x, float y, Paint? paint = null);
+    public void ClipRect(Rect rect);
+    public void DrawPath(SvgPath path, Paint paint);
 }

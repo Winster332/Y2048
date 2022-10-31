@@ -1,5 +1,7 @@
-﻿using Birch.Android.Extensions;
+﻿using System.Linq;
+using Birch.Android.Extensions;
 using Birch.Graphics;
+using Birch.System;
 using SkiaSharp;
 
 namespace Birch.Android;
@@ -7,14 +9,23 @@ namespace Birch.Android;
 public class SkGraphics : IGraphics
 {
     private SKCanvas? _canvas;
+    private IAppContext? _context;
+    private float _scale;
     public SkGraphics()
     {
         _canvas = null;
+        _context = null;
+        _scale = 1f;
     }
 
-    public void SetCanvas(SKCanvas canvas)
+    internal void SetContext(IAppContext context)
+    {
+        _context = context;
+    }
+    public void SetCanvas(SKCanvas canvas, float scale)
     {
         _canvas = canvas;
+        _scale = scale;
     }
 
     public void Clear(Color color)
@@ -59,7 +70,20 @@ public class SkGraphics : IGraphics
 
     public void DrawText(string text, float x, float y, Paint paint)
     {
-        _canvas?.DrawText(text, x, y, paint.ToSk());
+        if (_canvas == null || _context == null)
+            return;
+
+        var skPaint = paint.ToSk();
+        var bounds = SKRect.Empty;
+        skPaint.MeasureText(text, ref bounds);
+
+        // _canvas.Save();
+        // var size = _context.GetScreenSize();
+        // var scale = size.Width / textWidth;
+        // _canvas.Scale(scale);
+        skPaint.TextSize *= _scale;
+        _canvas.DrawText(text, x, y-bounds.Top, skPaint);
+        // _canvas.Restore();
     }
 
     public void DrawBitmap(Bitmap bitmap, float x, float y, Paint? paint = null)
@@ -75,4 +99,16 @@ public class SkGraphics : IGraphics
     public void Scale(float s) => _canvas?.Scale(s);
     public void Scale(float sx, float sy) => _canvas?.Scale(sx, sy);
     public void Scale(float sx, float sy, float px, float py) => _canvas?.Scale(sx, sy, px, py);
+
+    public void ClipRect(Rect rect)
+    {
+        _canvas?.ClipRect(new SKRect(rect.X, rect.Y, rect.Width, rect.Height));
+    }
+
+    public void DrawPath(SvgPath path, Paint paint)
+    {
+        var p = new SKPath();
+        p.AddPoly(path.Points.Select(x => new SKPoint(x.X, x.Y)).ToArray(), path.Close);
+        _canvas?.DrawPath(p, paint.ToSk());
+    }
 }
